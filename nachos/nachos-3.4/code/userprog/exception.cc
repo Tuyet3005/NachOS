@@ -119,8 +119,8 @@ ExceptionHandler(ExceptionType which)
                 {
                     case SC_Halt:
 
-                        DEBUG('a', "Shutdown, initiasdsdted by user program.\n");
-                        printf ("\n\n Shutdown, initiadfdfted by user program.\n");
+                        DEBUG('a', "Shutdown, initiated by user program.\n");
+                        printf ("\n\n Shutdown, initiated by user program.\n");
    	                interrupt->Halt();
                         break;
                     case SC_Exit:
@@ -145,12 +145,14 @@ ExceptionHandler(ExceptionType which)
                     case SC_Yield:
                         break;
                     case SC_Sub: 
-                        op1 = machine->ReadRegister (4); 
-                        op2 = machine->ReadRegister (5); 
-                        result = op1 - op2; 
+		    {
+                        int op1 = machine->ReadRegister (4); 
+                        int op2 = machine->ReadRegister (5); 
+                        int result = op1 - op2; 
                         machine->WriteRegister (2, result); 
                         interrupt->Halt();
-                        break;    
+                        break; 
+		    }   
                     default:
                         printf("\n Unexpected user mode exception (%d %d)", which, type); 
                         interrupt->Halt(); 

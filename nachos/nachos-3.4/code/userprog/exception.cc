@@ -48,6 +48,45 @@
 //	are in machine.h.
 //----------------------------------------------------------------------
 
+char* User2System(int virtAddr,int limit) 
+{ 
+ int i;// index 
+ int oneChar; 
+ char* kernelBuf = NULL; 
+ 
+ kernelBuf = new char[limit +1];//need for terminal string 
+ if (kernelBuf == NULL) 
+ return kernelBuf; 
+ memset(kernelBuf,0,limit+1); 
+ 
+ //printf("\n Filename u2s:"); 
+ for (i = 0 ; i < limit ;i++) 
+ { 
+ machine->ReadMem(virtAddr+i,1,&oneChar); 
+ kernelBuf[i] = (char)oneChar; 
+ //printf("%c",kernelBuf[i]); 
+ if (oneChar == 0) 
+ break; 
+ } 
+ return kernelBuf; 
+}
+
+
+int System2User(int virtAddr,int len,char* buffer) 
+{
+if (len < 0) return -1; 
+ if (len == 0)return len; 
+ int i = 0; 
+ int oneChar = 0 ; 
+ do{ 
+ oneChar= (int) buffer[i]; 
+ machine->WriteMem(virtAddr+i,1,oneChar); 
+ i ++; 
+ }while(i < len && oneChar != 0); 
+ return i; 
+}
+
+
 void
 ExceptionHandler(ExceptionType which)
 {
@@ -80,8 +119,8 @@ ExceptionHandler(ExceptionType which)
                 {
                     case SC_Halt:
 
-                        DEBUG('a', "Shutdown, initiated by user program.\n");
-                        printf ("\n\n Shutdown, initiated by user program.");
+                        DEBUG('a', "Shutdown, initiasdsdted by user program.\n");
+                        printf ("\n\n Shutdown, initiadfdfted by user program.\n");
    	                interrupt->Halt();
                         break;
                     case SC_Exit:
@@ -91,7 +130,10 @@ ExceptionHandler(ExceptionType which)
                     case SC_Join:
                         break;
                     case SC_Create:
+                    {
+                        printf("asdasd\n");
                         break;
+                    }
                     case SC_Read:
                         break;
                     case SC_Write:
@@ -102,6 +144,16 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Yield:
                         break;
+                    case SC_Sub: 
+                        op1 = machine->ReadRegister (4); 
+                        op2 = machine->ReadRegister (5); 
+                        result = op1 - op2; 
+                        machine->WriteRegister (2, result); 
+                        interrupt->Halt();
+                        break;    
+                    default:
+                        printf("\n Unexpected user mode exception (%d %d)", which, type); 
+                        interrupt->Halt(); 
                 }
             }
     }

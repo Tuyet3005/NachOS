@@ -9,6 +9,9 @@
 #define IN_ASM
 #include "syscall.h"
 
+
+
+
         .text   
         .align  2
 
@@ -20,6 +23,15 @@
  *	The Nachos kernel always starts a program by jumping to location 0.
  * -------------------------------------------------------------
  */
+//-----------------------------------------------------
+	.globl Sub 
+	.ent Sub 
+Sub: 
+	addiu $2,$0,SC_Sub 
+	syscall 
+	j $31 
+	.end Sub
+//----------------------------------------------------
 
 	.globl __start
 	.ent	__start

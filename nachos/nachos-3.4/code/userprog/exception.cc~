@@ -47,7 +47,7 @@
 //	"which" is the kind of exception.  The list of possible exceptions 
 //	are in machine.h.
 //----------------------------------------------------------------------
-
+#define MaxFileLength 32
 char* User2System(int virtAddr,int limit) 
 { 
  int i;// index 

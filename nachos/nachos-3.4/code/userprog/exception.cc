@@ -48,6 +48,7 @@
 //	are in machine.h.
 //----------------------------------------------------------------------
 #define MaxFileLength 32
+/*
 char* User2System(int virtAddr,int limit) 
 { 
  int i;// index 
@@ -87,7 +88,7 @@ int System2User(int virtAddr,int len,char* buffer)
 } 
 
 
-
+*/
 void
 ExceptionHandler(ExceptionType which)
 {
@@ -132,6 +133,7 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Create:
                     {
+/*
                         int virtAddr;
                         char* filename;
 
@@ -163,7 +165,7 @@ ExceptionHandler(ExceptionType which)
                         } 
                         machine->WriteRegister(2,0); // trả về cho chương trình 
                                                      // người dùng thành công 
-                        delete filename; 
+                        delete filename; */
                         break;
                     }
                     case SC_Read:

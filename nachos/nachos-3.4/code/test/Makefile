@@ -66,12 +66,6 @@ matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	../bin/coff2noff matmult.coff matmult
 
-#sub.o: sub.c
-#	$(CC) $(CFLAGS) -c sub.c
-#sub: sub.o start.o
-#	$(LD) $(LDFLAGS) start.o sub.o -o sub.coff
-#	../bin/coff2noff sub.coff sub
-
 #createfile.o: createfile.c
 #	$(CC) $(CFLAGS) -c createfile.c
 #createfile: createfile.o start.o

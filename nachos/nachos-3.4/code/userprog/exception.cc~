@@ -140,8 +140,8 @@ ExceptionHandler(ExceptionType which)
             interrupt->Halt();
             break;
         case NumExceptionTypes:
-            DEBUG('a', "\n No valid translation found");
-            printf("\n\n No valid translation found");
+            DEBUG('a', "\n Number exception types");
+            printf("\n\n Number exception types");
             interrupt->Halt();
             break;
         case SyscallException:
@@ -163,7 +163,7 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Create:
                     {
-/*
+                        /*
                         int virtAddr;
                         char* filename;
 
@@ -218,10 +218,7 @@ ExceptionHandler(ExceptionType which)
                         interrupt->Halt();
                         break; 
 		    }  
-                    */    
-                    default:
-                        printf("\n Unexpected user mode exception (%d %d)", which, type); 
-                        interrupt->Halt(); 
+                    */     
                 }
             }
     }

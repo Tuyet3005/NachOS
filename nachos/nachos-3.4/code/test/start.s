@@ -41,13 +41,6 @@ __start:
  * 	convention on the MIPS.
  * -------------------------------------------------------------
  */
-	.globl Sub 
-	.ent Sub 
-Sub: 
-	addiu $2,$0,SC_Sub 
-	syscall 
-	j $31 
-	.end Sub
 
 	.globl Halt
 	.ent	Halt

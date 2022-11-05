@@ -163,7 +163,7 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Create:
                     {
-/*
+                        /*
                         int virtAddr;
                         char* filename;
 
@@ -208,20 +208,7 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Yield:
                         break;
-                    /*Syscall test
-                    case SC_Sub: 
-		    {
-                        int op1 = machine->ReadRegister (4); 
-                        int op2 = machine->ReadRegister (5); 
-                        int result = op1 - op2; 
-                        machine->WriteRegister (2, result); 
-                        interrupt->Halt();
-                        break; 
-		    }  
-                    */    
-                    default:
-                        printf("\n Unexpected user mode exception (%d %d)", which, type); 
-                        interrupt->Halt(); 
+
                 }
             }
     }

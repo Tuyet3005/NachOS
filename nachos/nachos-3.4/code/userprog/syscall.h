@@ -29,7 +29,6 @@
 #define SC_Close	8
 #define SC_Fork		9
 #define SC_Yield	10
-#define SC_Sub		43 
 
 #ifndef IN_ASM
 
@@ -42,8 +41,6 @@
  * are then invoked in the Nachos kernel, after appropriate error checking, 
  * from the system call entry point in exception.cc.
  */
-
-int Sub (int a, int b);
 
 /* Stop Nachos, and print out performance stats */
 void Halt();		

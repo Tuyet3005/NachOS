@@ -48,6 +48,7 @@
 //	are in machine.h.
 //----------------------------------------------------------------------
 #define MaxFileLength 32
+#define MaxStringLength 64
 
 char* User2System(int virtAddr,int limit) 
 { 
@@ -219,8 +220,8 @@ ExceptionHandler(ExceptionType which)
                     case SC_PrintString:
                     {
                         int addr = machine->ReadRegister(4);
-                        char *input = User2System(addr, MaxFileLength);
-                        int res = gSynchConsole->Write(input, MaxFileLength);
+                        char *input = User2System(addr, MaxStringLength);
+                        int res = gSynchConsole->Write(input, MaxStringLength);
                         machine->WriteRegister(2, res == -1);
                         inc_PC();
                         break;
@@ -228,8 +229,8 @@ ExceptionHandler(ExceptionType which)
 
                     case SC_ReadChar:
                     {
-                        char *input = new char[MaxFileLength];
-                        gSynchConsole->Read(input, MaxFileLength);
+                        char *input = new char[MaxStringLength];
+                        gSynchConsole->Read(input, MaxStringLength);
                         machine->WriteRegister(2, input[0]);
                         delete[] input;
                         inc_PC();

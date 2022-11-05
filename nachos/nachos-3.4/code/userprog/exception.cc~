@@ -228,8 +228,8 @@ ExceptionHandler(ExceptionType which)
 
                     case SC_ReadChar:
                     {
-                        char *input = new char[1];
-                        gSynchConsole->Read(input, 1);
+                        char *input = new char[MaxFileLength];
+                        gSynchConsole->Read(input, MaxFileLength);
                         machine->WriteRegister(2, input[0]);
                         delete[] input;
                         inc_PC();

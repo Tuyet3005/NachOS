@@ -89,6 +89,13 @@ int System2User(int virtAddr,int len,char* buffer)
 
 
 */
+
+void inc_PC()
+{
+   	machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+    	machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+   	machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
+}
 void
 ExceptionHandler(ExceptionType which)
 {
@@ -122,7 +129,7 @@ ExceptionHandler(ExceptionType which)
                     case SC_Halt:
 
                         DEBUG('a', "Shutdown, initiated by user program.\n");
-                        printf ("\n\n Shutdown, initiated by user program.\n");
+                        printf ("\n\n Shutdown, initiated by user programu.\n");
    	                interrupt->Halt();
                         break;
                     case SC_Exit:

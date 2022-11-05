@@ -89,6 +89,13 @@ int System2User(int virtAddr,int len,char* buffer)
 
 
 */
+
+void inc_PC()
+{
+   	machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+    	machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+   	machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
+}
 void
 ExceptionHandler(ExceptionType which)
 {
@@ -178,6 +185,7 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Yield:
                         break;
+                    /*Syscall test
                     case SC_Sub: 
 		    {
                         int op1 = machine->ReadRegister (4); 
@@ -186,7 +194,8 @@ ExceptionHandler(ExceptionType which)
                         machine->WriteRegister (2, result); 
                         interrupt->Halt();
                         break; 
-		    }      
+		    }  
+                    */    
                     default:
                         printf("\n Unexpected user mode exception (%d %d)", which, type); 
                         interrupt->Halt(); 

@@ -32,10 +32,10 @@ AS = $(GCCDIR)as
 LD = $(GCCDIR)ld
 
 CPP = gcc -E
-INCDIR =-I../userprog -I../threads
+INCDIR =-I../userprog -I../threads -I../machine -I/usr/include -I/usr/include/linux
 CFLAGS = -G 0 -c $(INCDIR)
 
-all: halt shell matmult sort
+all: halt shell matmult sort createfile char_str
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.c > strt.s
@@ -66,9 +66,16 @@ matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	../bin/coff2noff matmult.coff matmult
 
-#createfile.o: createfile.c
-#	$(CC) $(CFLAGS) -c createfile.c
-#createfile: createfile.o start.o
-#	$(LD) $(LDFLAGS) start.o createfile.o -o createfile.coff
-#	../bin/coff2noff createfile.coff createfile
+createfile.o: createfile.c
+	$(CC) $(CFLAGS) -c createfile.c
+createfile: createfile.o start.o
+	$(LD) $(LDFLAGS) start.o createfile.o -o createfile.coff
+	../bin/coff2noff createfile.coff createfile
+
+char_str.o: char_str.c
+	$(CC) $(CFLAGS) -c char_str.c
+char_str: char_str.o start.o
+	$(LD) $(LDFLAGS) start.o char_str.o -o char_str.coff
+	../bin/coff2noff char_str.coff char_str
+
 

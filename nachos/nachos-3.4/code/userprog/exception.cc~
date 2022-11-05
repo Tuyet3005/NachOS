@@ -48,47 +48,45 @@
 //	are in machine.h.
 //----------------------------------------------------------------------
 #define MaxFileLength 32
-/*
+
 char* User2System(int virtAddr,int limit) 
 { 
- int i;// index 
- int oneChar; 
- char* kernelBuf = NULL; 
- 
- kernelBuf = new char[limit +1];//need for terminal string 
- if (kernelBuf == NULL) 
- return kernelBuf; 
- memset(kernelBuf,0,limit+1); 
- 
- //printf("\n Filename u2s:"); 
- for (i = 0 ; i < limit ;i++) 
- { 
- machine->ReadMem(virtAddr+i,1,&oneChar); 
- kernelBuf[i] = (char)oneChar; 
- //printf("%c",kernelBuf[i]); 
- if (oneChar == 0) 
- break; 
- } 
- return kernelBuf; 
+     int i;// index 
+     int oneChar; 
+     char* kernelBuf = NULL; 
+     
+     kernelBuf = new char[limit +1];//need for terminal string 
+     if (kernelBuf == NULL) 
+        return kernelBuf; 
+     memset(kernelBuf,0,limit+1); 
+     
+     //printf("\n Filename u2s:"); 
+     for (i = 0 ; i < limit ;i++) 
+     { 
+        machine->ReadMem(virtAddr+i,1,&oneChar); 
+        kernelBuf[i] = (char)oneChar; 
+        //printf("%c",kernelBuf[i]); 
+        if (oneChar == 0) 
+            break; 
+     } 
+     return kernelBuf; 
 }
 
 
 int System2User(int virtAddr,int len,char* buffer) 
 { 
- if (len < 0) return -1; 
- if (len == 0)return len; 
- int i = 0; 
- int oneChar = 0 ; 
- do{ 
- oneChar= (int) buffer[i]; 
- machine->WriteMem(virtAddr+i,1,oneChar); 
- i ++; 
- }while(i < len && oneChar != 0); 
- return i; 
+     if (len < 0) return -1; 
+     if (len == 0) return len; 
+     int i = 0; 
+     int oneChar = 0 ; 
+     do { 
+        oneChar = (int) buffer[i]; 
+        machine->WriteMem(virtAddr + i, 1, oneChar); 
+        i++; 
+     } while (i < len && oneChar != 0); 
+     return i; 
 } 
 
-
-*/
 
 void inc_PC()
 {
@@ -152,7 +150,7 @@ ExceptionHandler(ExceptionType which)
                     case SC_Halt:
 
                         DEBUG('a', "Shutdown, initiated by user program.\n");
-                        printf ("\n\n Shutdown, initiated by user program.\n");
+                        printf ("\n\n Shutdown, initiated by user programz.\n");
    	                interrupt->Halt();
                         break;
                     case SC_Exit:
@@ -209,6 +207,47 @@ ExceptionHandler(ExceptionType which)
                     case SC_Yield:
                         break;
 
+                    case SC_PrintChar:
+                    {
+                        int val = machine->ReadRegister(4);
+                        char input[] = {val};
+                        int res = gSynchConsole->Write(input, 1);
+                        machine->WriteRegister(2, res == -1);
+                        inc_PC();
+                        break;
+                    }
+                    case SC_PrintString:
+                    {
+                        int addr = machine->ReadRegister(4);
+                        char *input = User2System(addr, MaxFileLength);
+                        int res = gSynchConsole->Write(input, MaxFileLength);
+                        machine->WriteRegister(2, res == -1);
+                        inc_PC();
+                        break;
+                    }
+
+                    case SC_ReadChar:
+                    {
+                        char *input = new char[1];
+                        gSynchConsole->Read(input, 1);
+                        machine->WriteRegister(2, input[0]);
+                        delete[] input;
+                        inc_PC();
+                        break;
+                    }
+
+                    case SC_ReadString:
+                    {
+                        int bufAddr = machine->ReadRegister(4);
+                        int len = machine->ReadRegister(5);
+                        char *input = new char[len];
+                        int res = gSynchConsole->Read(input, len);
+                        System2User(bufAddr, len, input);
+                        machine->WriteRegister(2, res == -1);
+                        delete[] input;
+                        inc_PC();
+                        break;
+                    }
                 }
             }
     }

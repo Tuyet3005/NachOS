@@ -23,18 +23,6 @@
  *	The Nachos kernel always starts a program by jumping to location 0.
  * -------------------------------------------------------------
  */
-//-----------------------------------------------------
-/*
-	.globl Sub 
-	.ent Sub 
-Sub: 
-	addiu $2,$0,SC_Sub 
-	syscall 
-	j $31 
-	.end Sub
-*/
-//----------------------------------------------------
-
 	.globl __start
 	.ent	__start
 __start:
@@ -143,6 +131,37 @@ Yield:
 	syscall
 	j	$31
 	.end Yield
+
+	.globl PrintChar
+	.ent PrintChar
+PrintChar:
+	addiu $2,$0,SC_PrintChar
+	syscall
+	j $31
+	.end PrintChar
+
+	.globl PrintString
+	.ent PrintString
+PrintString:
+	addiu $2,$0,SC_PrintString
+	syscall
+	j $31
+	.end PrintString
+	.globl ReadChar
+	.ent ReadChar
+ReadChar:
+	addiu $2,$0,SC_ReadChar
+	syscall
+	j $31
+	.end ReadChar
+
+	.globl ReadString
+	.ent ReadString
+ReadString:
+	addiu $2,$0,SC_ReadString
+	syscall
+	j $31
+	.end ReadString
 
 /* dummy function to keep gcc happy */
         .globl  __main

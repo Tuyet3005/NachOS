@@ -207,6 +207,67 @@ ExceptionHandler(ExceptionType which)
                         break;
                     case SC_Yield:
                         break;
+		    case SC_ReadInt:
+		{
+			int bufAddr = machine->ReadRegister(4);
+                        int len = machine->ReadRegister(5);
+                        char *input = new char[len];
+                        gSynchConsole->Read(input, len);
+			System2User(bufAddr, len, input);
+			
+			len = strlen(input);
+			bool check = true; 
+			int start = 0; 
+
+			if (len == 0) { printf("\nKhong phai so nguyen\n"); } 
+			if (input[0] == '-') { start = 1; } 
+			for (; start < 4; start++) { 
+				if(input[start] < '0' || input[start] > '9') {
+					if(input[start] != '\n') {
+						machine->WriteRegister(2, 0);
+						printf("\nKhong phai so nguyen\n");
+						check = false;
+						break;
+					}
+				}
+			}
+			if (check) {
+				int result = atoi(input);
+				machine->WriteRegister(2, result);
+			}
+			delete[] input;
+			
+                        inc_PC();
+			break;
+		}
+                    case SC_PrintInt:
+		{
+			int number = machine->ReadRegister(4); 
+			int sign = number < 0 ? -1 : 1;
+			number *= sign;
+			int temp = number;
+			int numlen = number == 0 ? 1 : 0; 
+			while(temp > 0) {
+				numlen++;
+				temp /= 10;
+			}
+			numlen += sign == -1 ? 1 : 0;
+			
+			char* toScreen = new char[numlen + 1];
+			toScreen[numlen] = '\0';
+			while (numlen != 0) {
+				toScreen[numlen-- - 1] = (char)('0' + (number % 10));
+				number /= 10;
+			}
+			toScreen[0] = sign == -1 ? '-' : toScreen[0];
+			
+			
+			gSynchConsole->Write(toScreen, strlen(toScreen) + 1);
+			inc_PC();
+			
+			break;
+		} 
+			
 
                     case SC_PrintChar:
                     {

@@ -147,6 +147,7 @@ PrintString:
 	syscall
 	j $31
 	.end PrintString
+
 	.globl ReadChar
 	.ent ReadChar
 ReadChar:

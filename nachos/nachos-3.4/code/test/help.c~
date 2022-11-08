@@ -12,7 +12,7 @@ main()
 	PrintString("Mo ta chuong trinh ascii: ");
 	PrintString("Chuong trinh nay in ra bang ma ascii\n");
 	PrintString("Mo ta chuong trinh sort: ");
-	PrintString("Nguoi dung nhap vao 1 so n (n<=100).\n");
+	PrintString("Nguoi dung se nhap vao 1 so n (n<=100).\n");
 	PrintString("Tiep theo, nguoi dung se nhap n so nguyen. \n");
 	PrintString("Chuong trinh su dung bubble sort de sap xep mang.\n");
 	PrintString("Chuong trinh in mang theo tu tu tang dan ra man hinh.\n");

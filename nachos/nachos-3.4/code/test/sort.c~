@@ -25,6 +25,7 @@ main()
 			}
 		}
 	}
+// In ra cac phan tu cua mang
 	for (i = 0; i < n ; i++){
 		PrintInt(arr[i]);
 		PrintChar(32);

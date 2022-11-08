@@ -7,9 +7,7 @@ int main()
     char buffer[maxlen];
     int result;
     result = ReadInt(buffer, maxlen);
-    PrintString("toi day 1\n");
     PrintInt(result);
-    PrintString("toi day 2\n");
     Halt();
 }
 

@@ -1,32 +1,34 @@
-/* sort.c 
- *    Test program to sort a large number of integers.
- *
- *    Intention is to stress virtual memory system.
- *
- *    Ideally, we could read the unsorted array off of the file system,
- *	and store the result back to the file system!
- */
-
 #include "syscall.h"
-
-int A[1024];	/* size of physical memory; with code, we'll run out of space!*/
-
+#define maxlen 255
 int
 main()
 {
-    int i, j, tmp;
-
-    /* first initialize the array, in reverse sorted order */
-    for (i = 0; i < 1024; i++)		
-        A[i] = 1024 - i;
-
-    /* then sort! */
-    for (i = 0; i < 1023; i++)
-        for (j = i; j < (1023 - i); j++)
-	   if (A[j] > A[j + 1]) {	/* out of order -> need to swap ! */
-	      tmp = A[j];
-	      A[j] = A[j + 1];
-	      A[j + 1] = tmp;
-    	   }
-    Exit(A[0]);		/* and then we're done -- should be 0! */
+	int i, n, arr[100], j, tmp;
+	char buffer[maxlen];
+    PrintString("Nhap n: ");
+//Nhap n (buffer la chuoi nhap vao, maxlen la chieu dai toi da cua chuoi
+	n = ReadInt(buffer,maxlen);
+//Nhap cac phan tu cua mang
+	for (i = 0 ; i < n ; i ++){
+		PrintString("Nhap so nguyen thu ");
+		PrintInt(i+1);
+		PrintString(": ");
+		arr[i] = ReadInt(buffer, maxlen);
+	}
+//Thuat toan bubble sort sap xep mang
+	for (i = 0; i < n - 1; i++){
+		for (j = 0; j < n - 1 - i; j++){
+			if (arr[j] > arr[j+1]){
+				tmp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = tmp;
+			}
+		}
+	}
+// In ra cac phan tu cua mang
+	for (i = 0; i < n ; i++){
+		PrintInt(arr[i]);
+		PrintChar(32);
+	}
+	Halt();
 }

@@ -221,7 +221,7 @@ ExceptionHandler(ExceptionType which)
 
 			if (len == 0) { printf("\nKhong phai so nguyen\n"); } 
 			if (input[0] == '-') { start = 1; } 
-			for (; start < 4; start++) { 
+			for (; start < len; start++) { 
 				if(input[start] < '0' || input[start] > '9') {
 					if(input[start] != '\n') {
 						machine->WriteRegister(2, 0);

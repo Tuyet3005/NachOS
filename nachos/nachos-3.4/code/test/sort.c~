@@ -4,16 +4,15 @@ int
 main()
 {
 	int i, n, arr[100], j, tmp;
-	char buffer[maxlen];
-    PrintString("Nhap n: ");
+	PrintString("Nhap n: ");
 //Nhap n (buffer la chuoi nhap vao, maxlen la chieu dai toi da cua chuoi
-	n = ReadInt(buffer,maxlen);
+	n = ReadInt();
 //Nhap cac phan tu cua mang
 	for (i = 0 ; i < n ; i ++){
 		PrintString("Nhap so nguyen thu ");
 		PrintInt(i+1);
 		PrintString(": ");
-		arr[i] = ReadInt(buffer, maxlen);
+		arr[i] = ReadInt();
 	}
 //Thuat toan bubble sort sap xep mang
 	for (i = 0; i < n - 1; i++){

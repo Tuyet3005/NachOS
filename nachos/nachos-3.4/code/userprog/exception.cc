@@ -241,6 +241,7 @@ ExceptionHandler(ExceptionType which)
 		{
 			int number = machine->ReadRegister(4); 
 			int sign = number < 0 ? -1 : 1;
+			if (number == -2147483648){ number += 1; check = true; }
 			number *= sign;
 			int temp = number;
 			int numlen = number == 0 ? 1 : 0; 
@@ -257,9 +258,8 @@ ExceptionHandler(ExceptionType which)
 				number /= 10;
 			}
 			toScreen[0] = sign == -1 ? '-' : toScreen[0];
-			
-			
-			gSynchConsole->Write(toScreen, strlen(toScreen) + 1);
+			if (check) { toScreen[strlen(toScreen) - 1] = '8'; }
+			gSynchConsole->Write(toScreen, strlen(toScreen));
 			inc_PC();
 			
 			break;

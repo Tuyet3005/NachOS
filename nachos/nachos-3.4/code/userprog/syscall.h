@@ -130,7 +130,7 @@ void Fork(void (*func)());
  */
 void Yield();
 
-int ReadInt(char buffer[], int length);
+int ReadInt();
 
 void PrintInt(int interger);
 

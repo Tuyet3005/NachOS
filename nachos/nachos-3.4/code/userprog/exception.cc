@@ -209,18 +209,15 @@ ExceptionHandler(ExceptionType which)
                         break;
 		    case SC_ReadInt:
 		{
-			int bufAddr = machine->ReadRegister(4);
-                        int len = machine->ReadRegister(5);
-                        char *input = new char[len];
-                        gSynchConsole->Read(input, len);
-			System2User(bufAddr, len, input);
-			
-			len = strlen(input);
+			char *input = new char[MaxStringLength];
+                        gSynchConsole->Read(input, MaxStringLength);
+			int len = strlen(input);
 			bool check = true; 
 			int start = 0; 
 
 			if (len == 0) { printf("\nKhong phai so nguyen\n"); } 
 			if (input[0] == '-') { start = 1; } 
+			if (start == len) { printf("\nKhong phai so nguyen\n"); }
 			for (; start < len; start++) { 
 				if(input[start] < '0' || input[start] > '9') {
 					if(input[start] != '\n') {

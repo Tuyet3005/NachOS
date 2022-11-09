@@ -6,6 +6,7 @@ int main()
 { 
     char buffer[maxlen];
     int result;
+	PrintString("Nhap n:" );
     result = ReadInt(buffer, maxlen);
     PrintInt(result);
     Halt();

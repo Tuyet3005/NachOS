@@ -209,8 +209,8 @@ ExceptionHandler(ExceptionType which)
                         break;
 		    case SC_ReadInt:
 		{
-			char *input = new char[MaxStringLength];
-                        gSynchConsole->Read(input, MaxStringLength);
+			char *input = new char[255];
+                        gSynchConsole->Read(input, 255);
 			int len = strlen(input);
 			bool check = true; 
 			int start = 0; 

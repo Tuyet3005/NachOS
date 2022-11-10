@@ -241,6 +241,7 @@ ExceptionHandler(ExceptionType which)
 		{
 			int number = machine->ReadRegister(4); 
 			int sign = number < 0 ? -1 : 1;
+			bool check = false;
 			if (number == -2147483648){ number += 1; check = true; }
 			number *= sign;
 			int temp = number;

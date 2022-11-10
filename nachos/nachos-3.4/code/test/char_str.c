@@ -4,18 +4,15 @@
 int main() 
 { 
     char i, buffer[maxlen];
-    PrintChar('a');
-
-    PrintString("xyz");
-    PrintChar('\n');
-
-        i= ReadChar();
+    PrintString("Nhap ki tu: ");
+    i= ReadChar();
     PrintChar(i);
     PrintChar('\n');
 
+    PrintString("Nhap chuoi: ");
     ReadString(buffer, maxlen);
     PrintString(buffer);
-
+    PrintString("\nDone!!!");
     Halt();
 }
 

@@ -215,14 +215,14 @@ ExceptionHandler(ExceptionType which)
 			bool check = true; 
 			int start = 0; 
 
-			if (len == 0) { printf("\nKhong phai so nguyen\n"); } 
+			if (len == 0) { printf("\nKhong phai so nguyen (Mac dinh la 0)\n"); } 
 			if (input[0] == '-') { start = 1; } 
-			if (start == len) { printf("\nKhong phai so nguyen\n"); }
+			if (start == len) { printf("\nKhong phai so nguyen (Mac dinh la 0)\n"); }
 			for (; start < len; start++) { 
 				if(input[start] < '0' || input[start] > '9') {
 					if(input[start] != '\n') {
 						machine->WriteRegister(2, 0);
-						printf("\nKhong phai so nguyen\n");
+						printf("\nKhong phai so nguyen (Mac dinh la 0)\n");
 						check = false;
 						break;
 					}

@@ -374,6 +374,44 @@ ExceptionHandler(ExceptionType which)
                         inc_PC();
                         break;
                     }
+			case SC_CreateFile:
+		{
+			int virtAddr;
+			char* filename;
+			DEBUG('a', "\n SC_CreateFile call...");
+			DEBUG('a', "\n Reading virtual address of file");
+
+			virtAddr = machine->ReadRegister(4);
+			filename = User2System(virtAddr, 255);
+			
+			if (strlen(filename) == 0) {
+				printf("\n File name is not valid");
+				DEBUG('a', "\n File name is not valid");
+				machine->WriteRegister(2, -1);
+				break;
+			}
+
+			if (filename == NULL) {
+				printf("\n Not enough memory in system");		
+				DEBUG('a', "\n Not enough memory in system");	
+				delete filename;
+				break;
+			}
+			
+			DEBUG('a', "\n Finish reading filename");
+
+			if (!fileSystem->Create(filename, 0)) {
+				printf("\n Error create file '%s'", filename);
+				machine->WriteRegister(2, -1);
+				delete filename;
+				break;
+			}
+
+			machine->WriteRegister(2, 0);
+			delete filename;
+			inc_PC();
+			break;
+                }
 					case SC_Close:
 					{
 						int no = machine->ReadRegister(4);

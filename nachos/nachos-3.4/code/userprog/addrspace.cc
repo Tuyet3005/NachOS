@@ -172,6 +172,8 @@ AddrSpace::AddrSpace(OpenFile *executable) {
 
 AddrSpace::~AddrSpace()
 {
+   for (int i = 0; i < numPages; i++)
+       gPhysPageBitMap->Clear(pageTable[i].physicalPage);
    delete pageTable;
 }
 

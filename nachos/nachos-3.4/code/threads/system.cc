@@ -31,6 +31,7 @@ SynchDisk   *synchDisk;
 Machine *machine;	// user program memory and registers
 SynchConsole *gSynchConsole;
 BitMap *gPhysPageBitMap;
+Lock *addrLock;
 #endif
 
 #ifdef NETWORK
@@ -153,6 +154,7 @@ Initialize(int argc, char **argv)
     machine = new Machine(debugUserProg);	// this must come first
     gSynchConsole = new SynchConsole();
     gPhysPageBitMap = new BitMap(NumPhysPages);
+    addrLock = new Lock("address lock");
 #endif
 
 #ifdef FILESYS
@@ -184,6 +186,7 @@ Cleanup()
     delete machine;
     delete gSynchConsole;
     delete gPhysPageBitMap;
+    delete addrLock;
 #endif
 
 #ifdef FILESYS_NEEDED

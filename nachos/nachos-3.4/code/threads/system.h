@@ -17,6 +17,7 @@
 #include "timer.h"
 #include "synchcons.h"
 #include "bitmap.h"
+#include "synch.h"
 
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
@@ -36,6 +37,7 @@ extern Timer *timer;				// the hardware alarm clock
 extern Machine* machine;	// user program memory and registers
 extern SynchConsole* gSynchConsole;
 extern BitMap* gPhysPageBitMap;
+extern Lock* addrLock;
 #endif
 
 #ifdef FILESYS_NEEDED 		// FILESYS or FILESYS_STUB 

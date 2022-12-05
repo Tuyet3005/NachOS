@@ -99,15 +99,15 @@ AddrSpace::AddrSpace(OpenFile *executable) {
     // first, set up the translation
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++) {
-        pageTable[i].virtualPage = i; // for now, virtual page # = phys page #
+        pageTable[i].virtualPage = i;
         pageTable[i].physicalPage = gPhysPageBitMap->Find(); // tìm 1 trang trống và đánh dấu đã sử dụng
         pageTable[i].valid = TRUE;
         pageTable[i].use = FALSE;
         pageTable[i].dirty = FALSE;
-        pageTable[i].readOnly = FALSE;
         // if the code segment was entirely on
         // a separate page, we could set its
         // pages to be read-only
+        pageTable[i].readOnly = FALSE;
 
         // xóa các trang này trên memory
         bzero(&(machine->mainMemory[pageTable[i].physicalPage * PageSize]), PageSize);
@@ -218,7 +218,8 @@ AddrSpace::InitRegisters()
 //----------------------------------------------------------------------
 
 void AddrSpace::SaveState() 
-{}
+{
+}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState

@@ -19,7 +19,7 @@ Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
 BitMap *gPhysPageBitMap;
-Lock *addrLock;
+Semaphore *addrLock;
 STable *semTab;
 
 #ifdef FILESYS_NEEDED
@@ -86,7 +86,7 @@ Initialize(int argc, char **argv)
     bool randomYield = FALSE;
 
     gPhysPageBitMap = new BitMap(NumPhysPages);
-    addrLock = new Lock("address lock");
+    addrLock = new Semaphore("addrLock", 1);
     semTab = new STable();
 
 #ifdef USER_PROGRAM

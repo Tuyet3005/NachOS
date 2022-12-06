@@ -20,6 +20,7 @@ Timer *timer;				// the hardware timer device,
 					// for invoking context switches
 BitMap *gPhysPageBitMap;
 Semaphore *addrLock;
+PTable *pTab;
 STable *semTab;
 
 #ifdef FILESYS_NEEDED
@@ -88,6 +89,7 @@ Initialize(int argc, char **argv)
     gPhysPageBitMap = new BitMap(NumPhysPages);
     addrLock = new Semaphore("addrLock", 1);
     semTab = new STable();
+    pTab = new PTable(10);
 
 #ifdef USER_PROGRAM
     bool debugUserProg = FALSE;	// single step user program
@@ -205,6 +207,7 @@ Cleanup()
     delete gPhysPageBitMap;
     delete addrLock;
     delete semTab;
+    delete pTab;
     
     Exit(0);
 }

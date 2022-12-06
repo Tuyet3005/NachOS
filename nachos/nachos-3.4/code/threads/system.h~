@@ -33,8 +33,9 @@ extern Statistics *stats;			// performance metrics
 extern Timer *timer;				// the hardware alarm clock
 
 extern BitMap* gPhysPageBitMap;
-extern Lock* addrLock;
+extern Semaphore* addrLock;
 extern STable* semTab;
+extern PTable* pTab;
 
 #ifdef USER_PROGRAM
 #include "machine.h"

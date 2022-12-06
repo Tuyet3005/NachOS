@@ -150,6 +150,8 @@ int CreateFile(char* name);
 
 int CreateSemaphore(char* name, int semval);		
 
+int Join(SpaceId id);
+
 int Wait(char* name);
 
 int Signal(char* name);

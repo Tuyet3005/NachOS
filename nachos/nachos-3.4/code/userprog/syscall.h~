@@ -150,6 +150,10 @@ int CreateFile(char* name);
 
 int CreateSemaphore(char* name, int semval);		
 
+int Wait(char* name);
+
+int Signal(char* name);
+
 #endif /* IN_ASM */
 
 #endif /* SYSCALL_H */

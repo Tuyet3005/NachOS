@@ -51,6 +51,13 @@
 #define MaxFileLength 32
 #define MaxStringLength 64
 
+#include "../threads/system.h"
+#include "ptable.cc"
+#include "stable.cc"
+#include "pcb.cc"
+
+
+
 char* User2System(int virtAddr,int limit) 
 { 
      int i;// index 
@@ -157,7 +164,26 @@ ExceptionHandler(ExceptionType which)
                     case SC_Exit:
                         break;
                     case SC_Exec:
-                        break;
+			// SpaceId Exec(char *name);
+			{
+				int result;
+      		        	char *name;
+				name = User2System((int)machine->ReadRegister(4), 255);
+        			result = pTab->ExecUpdate(name);
+            
+		        	machine->WriteRegister(2, (int)result);
+
+            			/* Modify return point */
+            		{
+	                /* set previous programm counter (debugging only)*/
+        	        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+	
+        	        /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+        	        machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+
+        	        /* set next programm counter for brach execution */
+        	        machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
+        	    }
                     case SC_Join:
                         break;
                     case SC_Create:
@@ -542,7 +568,7 @@ ExceptionHandler(ExceptionType which)
                             /* Modify return point */
                             {
                                 /* set previous programm counter (debugging only)*/
-                                machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+                                 machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
 
                                 /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
                                 machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
@@ -555,5 +581,5 @@ ExceptionHandler(ExceptionType which)
                         }
                 }
             }
-    }
+    }}
 }

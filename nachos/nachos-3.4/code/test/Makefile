@@ -35,7 +35,7 @@ CPP = gcc -E
 INCDIR =-I../userprog -I../threads -I../machine -I/usr/include -I/usr/include/linux
 CFLAGS = -G 0 -c $(INCDIR)
 
-all: halt shell matmult sort createfile char_str rp_int help ascii open semaphore
+all: halt shell matmult sort createfile char_str rp_int help ascii open ping pong pingpong
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.c > strt.s
@@ -102,9 +102,21 @@ rp_int: rp_int.o start.o
 	$(LD) $(LDFLAGS) start.o rp_int.o -o rp_int.coff
 	../bin/coff2noff rp_int.coff rp_int
 
-semaphore.o: semaphore.c
-	$(CC) $(CFLAGS) -c semaphore.c
-semaphore: semaphore.o start.o
-	$(LD) $(LDFLAGS) start.o semaphore.o -o semaphore.coff
-	../bin/coff2noff semaphore.coff semaphore
+ping.o: ping.c
+	$(CC) $(CFLAGS) -c ping.c
+ping: ping.o start.o
+	$(LD) $(LDFLAGS) start.o ping.o -o ping.coff
+	../bin/coff2noff ping.coff ping
+
+pong.o: pong.c
+	$(CC) $(CFLAGS) -c pong.c
+pong: pong.o start.o
+	$(LD) $(LDFLAGS) start.o pong.o -o pong.coff
+	../bin/coff2noff pong.coff pong
+
+pingpong.o: pingpong.c
+	$(CC) $(CFLAGS) -c pingpong.c
+pingpong: pingpong.o start.o
+	$(LD) $(LDFLAGS) start.o pingpong.o -o pingpong.coff
+	../bin/coff2noff pingpong.coff pingpong
 

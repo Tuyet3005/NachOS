@@ -518,6 +518,36 @@ ExceptionHandler(ExceptionType which)
                             return;
                             break;
                         }
+
+                    case SC_Wait:
+                        {
+                            char *name = User2System((int)machine->ReadRegister(4), BUFFER_MAX_LENGTH);
+                            int result;
+
+                            if (name == NULL || strlen(name) == 0)
+                            {
+                                result = -1;
+                            }
+                            else
+                            {
+                                result = semTab->Wait(name);
+                            }
+                            machine->WriteRegister(2, (int)result);
+
+                            /* Modify return point */
+                            {
+                                /* set previous programm counter (debugging only)*/
+                                machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+
+                                /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+                                machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+
+                                /* set next programm counter for brach execution */
+                                machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
+                            }
+                            return;
+                            break;
+                        }
                 }
             }
     }

@@ -37,6 +37,8 @@
 #define SC_PrintString	17
 #define SC_CreateFile	18
 #define SC_CreateSemaphore 19
+#define SC_Wait         20
+#define SC_Signal       21
 
 #ifndef IN_ASM
 
@@ -147,6 +149,10 @@ void PrintString(char buffer[]);
 int CreateFile(char* name);
 
 int CreateSemaphore(char* name, int semval);		
+
+int Wait(char* name);
+
+int Signal(char* name);
 
 #endif /* IN_ASM */
 

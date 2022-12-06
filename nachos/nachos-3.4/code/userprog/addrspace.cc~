@@ -104,14 +104,14 @@ AddrSpace::AddrSpace(OpenFile *executable) {
         pageTable[i].valid = TRUE;
         pageTable[i].use = FALSE;
         pageTable[i].dirty = FALSE;
-        pageTable[i].readOnly = FALSE;
         // if the code segment was entirely on
         // a separate page, we could set its
         // pages to be read-only
+        pageTable[i].readOnly = FALSE;
 
         // xóa các trang này trên memory
         bzero(&(machine->mainMemory[pageTable[i].physicalPage * PageSize]), PageSize);
-        printf("phyPage %d \n", pageTable[i].physicalPage);
+        DEBUG('a', "physPage %d \n", pageTable[i].physicalPage);
     }
     addrLock->Release();
 

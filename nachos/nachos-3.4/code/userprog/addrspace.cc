@@ -89,7 +89,7 @@ AddrSpace::AddrSpace(OpenFile *executable) {
     // Check the available memory enough to load new process
     //debug
     if (numPages > gPhysPageBitMap->NumClear()) {
-        printf("\nAddrSpace:Load: not enough memory for new process..!");
+        DEBUG('a', "\nAddrSpace:Load: not enough memory for new process..!");
         numPages = 0;
         delete executable;
         addrLock->Release();
@@ -111,7 +111,7 @@ AddrSpace::AddrSpace(OpenFile *executable) {
 
         // xóa các trang này trên memory
         bzero(&(machine->mainMemory[pageTable[i].physicalPage * PageSize]), PageSize);
-        printf("phyPage %d \n", pageTable[i].physicalPage);
+        DEBUG('a', "physPage %d \n", pageTable[i].physicalPage);
     }
     addrLock->Release();
 

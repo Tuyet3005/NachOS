@@ -31,7 +31,7 @@ class OpenFile {
     int type;
     int seekPosition;
     OpenFile(int f) { file = f; currentOffset = 0; }	// open the file
-    OpenFile(int f, int type) { file = f; currentOffset = 0; type = mode; } // open file w special type
+    OpenFile(int f, int type) { file = f; currentOffset = 0; type = type; } // open file w special type
     ~OpenFile() { Close(file); }			// close the file
 
     int ReadAt(char *into, int numBytes, int position) { 

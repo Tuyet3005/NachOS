@@ -176,7 +176,7 @@ ExceptionHandler(ExceptionType which)
                             break;
                         }
 
-                        if (fileSystem->openfile[openf_id] == NULL)
+                        if (fileSystem->openf[openf_id] == NULL)
                         {
                             machine->WriteRegister(2, -1);
                             break;
@@ -194,11 +194,11 @@ ExceptionHandler(ExceptionType which)
                             break;
                         }
             
-                        int before = fileSystem->openfile[openf_id]->GetCurrentPos();
-                        if ((fileSystem->openfile[openf_id]->Read(buf, charcount)) > 0)
+                        int before = fileSystem->openf[openf_id]->GetCurrentPos();
+                        if ((fileSystem->openf[openf_id]->Read(buf, charcount)) > 0)
                         {
                             // copy data from kernel to user space
-                            int after = fileSystem->openfile[openf_id]->GetCurrentPos();
+                            int after = fileSystem->openf[openf_id]->GetCurrentPos();
                             System2User(virtAddr, charcount, buf);
                             machine->WriteRegister(2, after - before + 1);    // after & before just used for returning
                         } else {
@@ -222,14 +222,14 @@ ExceptionHandler(ExceptionType which)
                             break;
                         }
             
-                        if (fileSystem->openfile[openf_id] == NULL)
+                        if (fileSystem->openf[openf_id] == NULL)
                         {
                             machine->WriteRegister(2, -1);
                             break;
                         }
 
                         // read-only file    
-                        if (fileSystem->openfile[openf_id]->type == 1)
+                        if (fileSystem->openf[openf_id]->type == 1)
                         {
                             printf("Try to modify read-only file");
                             machine->WriteRegister(2, -1);
@@ -256,10 +256,10 @@ ExceptionHandler(ExceptionType which)
 
 
                         // write into file
-                        int before = fileSystem->openfile[openf_id]->GetCurrentPos();
-                        if ((fileSystem->openfile[openf_id]->Write(buf, charcount)) != 0)
+                        int before = fileSystem->openf[openf_id]->GetCurrentPos();
+                        if ((fileSystem->openf[openf_id]->Write(buf, charcount)) != 0)
                         {
-                            int after = fileSystem->openfile[openf_id]->GetCurrentPos();
+                            int after = fileSystem->openf[openf_id]->GetCurrentPos();
                             System2User(virtAddr, after - before, buf);
                             machine->WriteRegister(2, after - before + 1);
                             delete[] buf;
@@ -413,80 +413,55 @@ ExceptionHandler(ExceptionType which)
                             break;
                         }
 
-                    case SC_Close:
-                        {
-                            int no = machine->ReadRegister(4);
-                            int i = fileSystem->index;
-
-                            // opened [i] files, and want to close file No.[no] (no > i) --> go wrong
-                            if (i < no)
-                            {
-                                printf("Close file failed \n");
-                                machine->WriteRegister(2, -1);
-                                inc_PC();
-                                break;
-                            }
-
-                            fileSystem->openfile[no] == NULL;
-                            delete fileSystem->openfile[no];
-                            machine->WriteRegister(2, 0);
-                            printf("Close file success\n");
-                            inc_PC();
-                            break;
-                        }
-
-                    case SC_Open:
-                        {
-                            int bufAddr = machine->ReadRegister(4); 
-                            int type = machine->ReadRegister(5);
-                            char *buf;
-
-                            // if already opened 10 files
-                            if (fileSystem->index > 10)
-                            {
-                                machine->WriteRegister(2, -1);
-                                delete[] buf;
-                                inc_PC();
-                                break;
-                            }
-                    
-                            // if open stdin or stdout, number of openfiles dont increase
-                            buf = User2System(bufAddr, MaxFileLength + 1);
-                            if (strcmp(buf, "stdin") == 0)
-                            {
-                                printf("Stdin mode\n");
-                                machine->WriteRegister(2, 0);
-                                delete[] buf;
-                                inc_PC();
-                                break;
-                            }
-                            if (strcmp(buf, "stdout") == 0)
-                            {
-                                printf("Stdout mode\n");
-                                machine->WriteRegister(2, 1);
-                                delete[] buf;
-                                inc_PC();
-                                break;
-                            }
-
-                            // if opening file succeed
-                            // should not use OpenFile* temp to store = fileSystem->openfile[fileSystem->index]
-                            // cause, i dont have a method to destroy this pointer correctly
-                            if ((fileSystem->openfile[fileSystem->index] = fileSystem->Open(buf, type)) != NULL)
-                            {
-
-                                printf("\nOpen file success '%s'\n", buf);
-                                machine->WriteRegister(2, fileSystem->index - 1);
-                            }
-                            else 
-                            {
-                                printf("Can not open file '%s'\n", buf);
-                                machine->WriteRegister(2, -1);
-                            }
-                            delete[] buf;
-                            inc_PC();
-                            break;
-                        }
+                   case SC_Open:
+				{
+					int bufAddr = machine->ReadRegister(4); // read string pointer from user
+					int type = machine->ReadRegister(5);
+					char *buf = new char[MaxFileLength];
+					if (fileSystem->index > 10)
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					buf = User2System(bufAddr, MaxFileLength);
+					if (strcmp(buf,"stdin") == 0)
+					{
+						printf("stdin mode\n");
+						machine->WriteRegister(2, 0);
+						inc_PC();
+						break;
+					}
+					if (strcmp(buf,"stdout") == 0)
+					{
+						printf("stdout mode\n");
+						machine->WriteRegister(2, 1);
+						inc_PC();
+						break;
+					}
+					if ((fileSystem->openf[fileSystem->index] = fileSystem->Open(buf, type)) != NULL)
+					{
+						DEBUG('f',"open file successfully");
+						machine->WriteRegister(2, fileSystem->index-1);
+					} else 
+					{
+						DEBUG('f',"can not open file");
+						machine->WriteRegister(2, -1);
+					};
+					delete [] buf;
+					inc_PC();
+					break;
+				}
+				case SC_Close:
+				{
+					int m_index = machine->ReadRegister(4);
+					if (fileSystem->openf[m_index] == NULL) break;
+					delete fileSystem->openf[m_index];
+					fileSystem->openf[m_index] = NULL;
+					inc_PC();
+					break;
+				}
 
                     case SC_CreateSemaphore:
                         {

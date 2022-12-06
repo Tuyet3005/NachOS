@@ -140,22 +140,16 @@ FileSystem::FileSystem(bool format)
         freeMapFile = new OpenFile(FreeMapSector);
         directoryFile = new OpenFile(DirectorySector);
     }
-    	openfile = new OpenFile*[10];
+	openf = new OpenFile*[10];
 	index = 0;
 	for (int i = 0; i < 10; ++i)
 	{
-		openfile[i] = NULL;
+		openf[i] = NULL;
 	}
-	this->Create("stdin",0); 
-	this->Create("stdout",0); 
-
-	OpenFile* temp = this->Open("stdin",2); // index = 1			
-	openfile[0] = temp;		// index = 1
-
-	temp = this->Open("stdout", 3);
-	openfile[1] =temp;	// index = 2
-	index = 1;
-	delete temp;
+	openf[index++] = this->Open("stdin",2);
+	openf[index++] = this->Open("stdout",2);
+	this->Create("stdin",0);
+	this->Create("stdout",0);
 }
 
 //----------------------------------------------------------------------
@@ -251,15 +245,14 @@ FileSystem::Open(char *name)
     directory->FetchFrom(directoryFile);
     sector = directory->Find(name); 
     if (sector >= 0) 		
-	openfile[index] = new OpenFile(sector);	// name was found in directory 
+	openf[index] = new OpenFile(sector);	// name was found in directory 
     delete directory;
-    index++;
-    return openfile[index-1];				// return NULL if not found
+		index++;
+    return openf[index-1];				// return NULL if not found
 }
 
-OpenFile *
-FileSystem::Open(char *name, int type)
-{ 
+OpenFile* FileSystem::Open(char *name, int type)
+{
     Directory *directory = new Directory(NumDirEntries);
     OpenFile *openFile = NULL;
     int sector;
@@ -268,10 +261,10 @@ FileSystem::Open(char *name, int type)
     directory->FetchFrom(directoryFile);
     sector = directory->Find(name); 
     if (sector >= 0) 		
-	openfile[index] = new OpenFile(sector);	// name was found in directory 
+	openf[index] = new OpenFile(sector, type);	// name was found in directory 
     delete directory;
-    index++;
-    return openfile[index-1];				// return NULL if not found
+		index++;
+    return openf[index-1];				// return NULL if not found
 }
 
 //----------------------------------------------------------------------
@@ -372,4 +365,4 @@ FileSystem::Print()
     delete dirHdr;
     delete freeMap;
     delete directory;
-}
+} 

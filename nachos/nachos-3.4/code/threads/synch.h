@@ -20,6 +20,10 @@
 #include "copyright.h"
 #include "thread.h"
 #include "list.h"
+#include "bitmap.h"
+
+#define MAX_SEMAPHORE 10
+#define BUFFER_MAX_LENGTH 255
 
 // The following class defines a "semaphore" whose value is a non-negative
 // integer.  The semaphore has only two operations P() and V():
@@ -133,4 +137,106 @@ class Condition {
     char* name;
     // plus some other stuff you'll need to define
 };
+
+class Sem {
+  private:
+    char name[50];
+    Semaphore *sem; // Tạo Semaphore để quản lý
+  public:
+    // khởi tạo đối tượng Sem. Gán giá trị ban đầu là null
+    // nhớ khởi tạo bm sử dụng
+    Sem(char* na, int i){
+      strcpy(this->name,na);
+      sem = new Semaphore(name,i);
+    }
+
+    // hủy các đối tượng đã tạo
+    ~Sem(){
+      delete sem;
+    }
+
+    // thực hiện thao tác chờ
+    void wait(){
+      sem->P();
+    }
+
+    // thực hiện thao tác giải phóng Semaphore
+    void signal(){
+      sem->V();
+    }
+
+    // Trả về tên của Semaphore
+    char* GetName(){
+      return name;
+    }
+};
+
+class STable {
+  private:
+    BitMap* bm; // quản lý slot trống
+    Sem* semTab[MAX_SEMAPHORE]; // quản lý tối đa 10 đối tượng Sem
+  public:
+  // khởi tạo size đối tượng Sem để quản lý 10 Semaphore. Gán giá trị ban đầu là null
+  STable()
+  {
+    for (int i = 0; i < MAX_SEMAPHORE; i++)
+      semTab[i] = NULL;
+    bm = new BitMap(MAX_SEMAPHORE);
+  }
+
+  // hủy các đối tượng đã tạo
+  ~STable()
+  {
+    for (int i = 0; i < MAX_SEMAPHORE; i++)
+      if (semTab[i] != NULL)
+      {
+        delete semTab[i];
+        semTab[i] = NULL;
+      }
+    delete bm;
+    bm = NULL;
+  }
+
+  int Create(char* name, int init) // Kiểm tra Semaphore “name” chưa tồn tại thì tạo Semaphore mới. Ngược lại, báo lỗi.
+  {
+    int free = bm->Find();
+    if (free < 0) return -1;
+
+    semTab[free] = new Sem(name, init);
+    return 0;
+  }
+
+  int Wait(char* name)// Nếu tồn tại Semaphore “name” thì gọi this->P() để thực thi. Ngược lại, báo lỗi.
+  {
+    for (int i = 0; i < MAX_SEMAPHORE; ++i)
+    {
+      if (bm->Test(i) && strcmp(name, semTab[i]->GetName()) == 0)
+      {
+        semTab[i]->wait();
+        return 0;
+      }
+    }
+    return -1;
+  }
+
+  int Signal(char* name) // Nếu tồn tại Semaphore “name” thì gọi this->V() để thực thi. Ngược lại, báo lỗi.
+  {
+    for (int i = 0; i < MAX_SEMAPHORE; ++i)
+    {
+      if (bm->Test(i) && strcmp(name, semTab[i]->GetName()) == 0)
+      {
+        semTab[i]->signal();
+        return 0;
+      }
+    }
+    return -1;
+  }
+
+  // Tìm slot trống.
+  int FindFreeSlot(int id)
+  {
+    return bm->Find();
+  }
+};
+
 #endif // SYNCH_H

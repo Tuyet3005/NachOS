@@ -103,10 +103,10 @@ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../machine/machine.h ../threads/utility.h \
  ../machine/translate.h ../machine/disk.h ../userprog/addrspace.h \
  ../filesys/filesys.h ../filesys/openfile.h ../threads/list.h \
- ../threads/system.h ../threads/scheduler.h ../machine/interrupt.h \
- ../threads/list.h ../machine/stats.h ../machine/timer.h \
- ../threads/synchcons.h ../machine/console.h ../userprog/bitmap.h \
- ../filesys/openfile.h
+ ../userprog/bitmap.h ../filesys/openfile.h ../threads/system.h \
+ ../threads/scheduler.h ../machine/interrupt.h ../threads/list.h \
+ ../machine/stats.h ../machine/timer.h ../threads/synchcons.h \
+ ../machine/console.h
 synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/synchlist.h ../threads/list.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \
@@ -124,7 +124,7 @@ synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/synch.h ../threads/thread.h \
  ../machine/machine.h ../threads/utility.h ../machine/translate.h \
  ../machine/disk.h ../userprog/addrspace.h ../filesys/filesys.h \
- ../filesys/openfile.h
+ ../filesys/openfile.h ../userprog/bitmap.h ../filesys/openfile.h
 system.o: ../threads/system.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/system.h ../threads/utility.h \
  ../threads/bool.h ../machine/sysdep.h ../threads/copyright.h \
@@ -163,10 +163,10 @@ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../machine/machine.h ../threads/utility.h \
  ../machine/translate.h ../machine/disk.h ../userprog/addrspace.h \
  ../filesys/filesys.h ../filesys/openfile.h ../threads/switch.h \
- ../threads/synch.h ../threads/list.h ../threads/system.h \
- ../threads/scheduler.h ../machine/interrupt.h ../threads/list.h \
- ../machine/stats.h ../machine/timer.h ../threads/synchcons.h \
- ../machine/console.h ../userprog/bitmap.h ../filesys/openfile.h
+ ../threads/synch.h ../threads/list.h ../userprog/bitmap.h \
+ ../filesys/openfile.h ../threads/system.h ../threads/scheduler.h \
+ ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
+ ../machine/timer.h ../threads/synchcons.h ../machine/console.h
 utility.o: ../threads/utility.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/utility.h ../threads/bool.h \
  ../machine/sysdep.h ../threads/copyright.h /usr/include/stdio.h \
@@ -504,7 +504,8 @@ synchcons.o: ../threads/synchcons.cc /usr/include/stdc-predef.h \
  /usr/include/xlocale.h ../threads/synch.h ../threads/thread.h \
  ../threads/utility.h ../machine/machine.h ../machine/translate.h \
  ../machine/disk.h ../userprog/addrspace.h ../filesys/filesys.h \
- ../filesys/openfile.h ../threads/list.h
+ ../filesys/openfile.h ../threads/list.h ../userprog/bitmap.h \
+ ../filesys/openfile.h
 # DEPENDENCIES MUST END AT END OF FILE
 # IF YOU PUT STUFF HERE IT WILL GO AWAY
 # see make depend above

@@ -492,16 +492,15 @@ ExceptionHandler(ExceptionType which)
                         {
                             int result;
                             char *name = User2System((int)machine->ReadRegister(4), BUFFER_MAX_LENGTH);
-                            if (name == NULL || strlen(name) == 0) { result = -1; }
+                            int initval = (int)machine->ReadRegister(5);
+
+                            if (name == NULL || strlen(name) == 0)
+                            {
+                                result = -1;
+                            }
                             else
                             {
-                                int free = gSemaphoreBitMap->Find();
-                                if (free == -1) { result = -1; }
-                                else
-                                {
-                                    semaphoreList[free] = new Semaphore(name, (int)machine->ReadRegister(5));
-                                    result = 0;
-                                }
+                                result = semTab->Create(name, initval);
                             }
                             machine->WriteRegister(2, (int)result);
 

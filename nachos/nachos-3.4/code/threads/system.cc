@@ -84,6 +84,9 @@ Initialize(int argc, char **argv)
     char* debugArgs = "";
     bool randomYield = FALSE;
 
+    gPhysPageBitMap = new BitMap(NumPhysPages);
+    addrLock = new Lock("address lock");
+
 #ifdef USER_PROGRAM
     bool debugUserProg = FALSE;	// single step user program
 #endif
@@ -153,8 +156,6 @@ Initialize(int argc, char **argv)
 #ifdef USER_PROGRAM
     machine = new Machine(debugUserProg);	// this must come first
     gSynchConsole = new SynchConsole();
-    gPhysPageBitMap = new BitMap(NumPhysPages);
-    addrLock = new Lock("address lock");
 #endif
 
 #ifdef FILESYS
@@ -185,8 +186,6 @@ Cleanup()
 #ifdef USER_PROGRAM
     delete machine;
     delete gSynchConsole;
-    delete gPhysPageBitMap;
-    delete addrLock;
 #endif
 
 #ifdef FILESYS_NEEDED
@@ -200,6 +199,9 @@ Cleanup()
     delete timer;
     delete scheduler;
     delete interrupt;
+
+    delete gPhysPageBitMap;
+    delete addrLock;
     
     Exit(0);
 }

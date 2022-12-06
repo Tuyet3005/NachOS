@@ -18,6 +18,10 @@ Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
+BitMap *gPhysPageBitMap;
+Lock *addrLock;
+BitMap *gSemaphoreBitMap;
+Semaphore *semaphoreList[MAX_SEMAPHORE];
 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
@@ -30,8 +34,6 @@ SynchDisk   *synchDisk;
 #ifdef USER_PROGRAM	// requires either FILESYS or FILESYS_STUB
 Machine *machine;	// user program memory and registers
 SynchConsole *gSynchConsole;
-BitMap *gPhysPageBitMap;
-Lock *addrLock;
 #endif
 
 #ifdef NETWORK
@@ -86,6 +88,7 @@ Initialize(int argc, char **argv)
 
     gPhysPageBitMap = new BitMap(NumPhysPages);
     addrLock = new Lock("address lock");
+    gSemaphoreBitMap = new BitMap(MAX_SEMAPHORE);
 
 #ifdef USER_PROGRAM
     bool debugUserProg = FALSE;	// single step user program
@@ -202,6 +205,10 @@ Cleanup()
 
     delete gPhysPageBitMap;
     delete addrLock;
+    delete gSemaphoreBitMap;
+
+    for (int i = 0; i < MAX_SEMAPHORE; i++)
+        if (semaphoreList[i] != NULL) delete semaphoreList[i];
     
     Exit(0);
 }

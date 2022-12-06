@@ -19,6 +19,8 @@
 #include "bitmap.h"
 #include "synch.h"
 
+#define MAX_SEMAPHORE 10
+
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else
@@ -32,12 +34,15 @@ extern Interrupt *interrupt;			// interrupt status
 extern Statistics *stats;			// performance metrics
 extern Timer *timer;				// the hardware alarm clock
 
+extern BitMap* gPhysPageBitMap;
+extern Lock* addrLock;
+extern BitMap* gSemaphoreBitMap;
+extern Semaphore* semaphoreList[MAX_SEMAPHORE];
+
 #ifdef USER_PROGRAM
 #include "machine.h"
 extern Machine* machine;	// user program memory and registers
 extern SynchConsole* gSynchConsole;
-extern BitMap* gPhysPageBitMap;
-extern Lock* addrLock;
 #endif
 
 #ifdef FILESYS_NEEDED 		// FILESYS or FILESYS_STUB 

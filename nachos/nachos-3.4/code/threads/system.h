@@ -19,6 +19,9 @@
 #include "bitmap.h"
 #include "synch.h"
 
+#define MAX_SEMAPHORE 10
+#define BUFFER_MAX_LENGTH 255
+
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else
@@ -34,6 +37,8 @@ extern Timer *timer;				// the hardware alarm clock
 
 extern BitMap* gPhysPageBitMap;
 extern Lock* addrLock;
+extern BitMap* gSemaphoreBitMap;
+extern Semaphore* semaphoreList[MAX_SEMAPHORE];
 
 #ifdef USER_PROGRAM
 #include "machine.h"

@@ -33,7 +33,7 @@ extern Statistics *stats;			// performance metrics
 extern Timer *timer;				// the hardware alarm clock
 
 extern BitMap* gPhysPageBitMap;
-extern Lock* addrLock;
+extern Semaphore* addrLock;
 extern STable* semTab;
 
 #ifdef USER_PROGRAM

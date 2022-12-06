@@ -87,7 +87,7 @@ Initialize(int argc, char **argv)
 
     gPhysPageBitMap = new BitMap(NumPhysPages);
     addrLock = new Lock("address lock");
-    semTab = new SemTab();
+    semTab = new STable();
 
 #ifdef USER_PROGRAM
     bool debugUserProg = FALSE;	// single step user program

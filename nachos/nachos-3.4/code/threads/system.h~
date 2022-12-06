@@ -19,9 +19,6 @@
 #include "bitmap.h"
 #include "synch.h"
 
-#define MAX_SEMAPHORE 10
-#define BUFFER_MAX_LENGTH 255
-
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else

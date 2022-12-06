@@ -137,7 +137,7 @@ AddrSpace::AddrSpace(char* filename) {
         (WordToHost(noffH.noffMagic) == NOFFMAGIC))
         SwapHeader(& noffH);
     ASSERT(noffH.noffMagic == NOFFMAGIC);
-    addrLock->Acquire();
+    addrLock->P();
 
     // how big is address space?
     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize; // we need to increase the size to leave room for the stack
@@ -150,7 +150,7 @@ AddrSpace::AddrSpace(char* filename) {
         DEBUG('a', "\nAddrSpace:Load: not enough memory for new process..!");
         numPages = 0;
         delete executable;
-        addrLock->Release();
+        addrLock->V();
         return;
     }
 
@@ -172,7 +172,7 @@ AddrSpace::AddrSpace(char* filename) {
         // xóa các trang này trên memory
         bzero(&(machine->mainMemory[pageTable[i].physicalPage * PageSize]), PageSize);
     }
-    addrLock->Release();
+    addrLock->V();
 
     // Calculate numCodePage and numDataPage
     numCodePage = divRoundUp(noffH.code.size, PageSize);

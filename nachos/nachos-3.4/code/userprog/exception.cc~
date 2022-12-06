@@ -522,6 +522,7 @@ ExceptionHandler(ExceptionType which)
                     case SC_Wait:
                         {
                             char *name = User2System((int)machine->ReadRegister(4), BUFFER_MAX_LENGTH);
+                            int result;
 
                             if (name == NULL || strlen(name) == 0)
                             {

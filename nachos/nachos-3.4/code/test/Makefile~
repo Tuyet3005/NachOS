@@ -102,3 +102,9 @@ rp_int: rp_int.o start.o
 	$(LD) $(LDFLAGS) start.o rp_int.o -o rp_int.coff
 	../bin/coff2noff rp_int.coff rp_int
 
+semaphore.o: semaphore.c
+	$(CC) $(CFLAGS) -c semaphore.c
+semaphore: semaphore.o start.o
+	$(LD) $(LDFLAGS) start.o semaphore.o -o semaphore.coff
+	../bin/coff2noff semaphore.coff semaphore
+

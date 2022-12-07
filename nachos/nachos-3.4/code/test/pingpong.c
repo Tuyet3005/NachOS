@@ -1,6 +1,5 @@
 #include "syscall.h"
 
-typedef SpaceId;
 int main() 
 {
 	SpaceId pingPID, pongPID;
@@ -10,7 +9,12 @@ int main()
 	pingPID = Exec("./test/ping");
 	pongPID = Exec("./test/pong");
 	PrintInt(pingPID);
+        PrintChar('\n');
 	PrintInt(pongPID);
-	Join(pingPID);
-	Join(pongPID);
+        PrintChar('\n');
+	PrintInt(Join(pingPID));
+        PrintChar('\n');
+	PrintInt(Join(pongPID));
+        PrintChar('\n');
+        Halt();
 }

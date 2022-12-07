@@ -29,7 +29,7 @@ CFLAGS = -g -Wall -Wshadow $(INCPATH) $(DEFINES) $(HOST) -DCHANGED
 
 # These definitions may change as the software is updated.
 # Some of them are also system dependent
-CPP= gcc -E
+CPP= gcc -E -g
 CC = g++
 LD = g++
 AS = as

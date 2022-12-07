@@ -162,9 +162,25 @@ ExceptionHandler(ExceptionType which)
                         interrupt->Halt();
                         break;
                     case SC_Exit:
-                        break;
+                        {
+				int result = pTab->ExitUpdate((int)machine->ReadRegister(4));
+				machine->WriteRegister(2, result);
+
+
+                            /* Modify return point */
+                            {
+                                /* set previous programm counter (debugging only)*/
+                                machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+
+                                /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+                                machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+
+                                /* set next programm counter for brach execution */
+                                machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
+                            }
+				break;
+			}
                     case SC_Exec:
-			// SpaceId Exec(char *name);
 			{
 				int result;
       		        	char *name;
@@ -173,19 +189,38 @@ ExceptionHandler(ExceptionType which)
             
 		        	machine->WriteRegister(2, (int)result);
 
-            			/* Modify return point */
-            		{
-	                /* set previous programm counter (debugging only)*/
-        	        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
-	
-        	        /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
-        	        machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+                            /* Modify return point */
+                            {
+                                /* set previous programm counter (debugging only)*/
+                                machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
 
-        	        /* set next programm counter for brach execution */
-        	        machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
-        	    }
+                                /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+                                machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+
+                                /* set next programm counter for brach execution */
+                                machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
+                            }
+				break;
+			}
                     case SC_Join:
-                        break;
+                        {
+				int result = pTab->JoinUpdate((int)machine->ReadRegister(4));
+				machine->WriteRegister(2, result);
+
+
+                            /* Modify return point */
+                            {
+                                /* set previous programm counter (debugging only)*/
+                                machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+
+                                /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+                                machine->WriteRegister(PCReg, machine->ReadRegister(PCReg) + 4);
+
+                                /* set next programm counter for brach execution */
+                                machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
+                            }
+				break;
+			}
                     case SC_Create:
                         break;
                     case SC_Read:
@@ -581,5 +616,5 @@ ExceptionHandler(ExceptionType which)
                         }
                 }
             }
-    }}
+    }
 }

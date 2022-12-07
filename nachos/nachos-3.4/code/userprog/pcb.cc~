@@ -26,6 +26,7 @@ extern void StartProcess_2(int id) {
     space->InitRegisters(); // set the initial register values
     space->RestoreState();  // load page table register
 
+    printf("Running user program %d", id);
     machine->Run(); // jump to the user progam
 
 }

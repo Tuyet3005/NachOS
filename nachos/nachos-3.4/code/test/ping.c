@@ -6,4 +6,5 @@ int main()
 	for (i = 0; i < 1000; i++){
 		PrintChar('A');
 	}
+        Exit(0);
 }

@@ -158,16 +158,36 @@ ExceptionHandler(ExceptionType which)
                     
                     case SC_Halt:
                         DEBUG('a', "Shutdown, initiated by user program.\n");
-                        printf ("\n\n Shutdown, initiated by user programz.\n");
+                        printf ("\n\n Shutdown, initiated by user program.\n");
                         interrupt->Halt();
                         break;
                     case SC_Exit:
-                        break;
+					{
+
+						int exitStatus = machine->ReadRegister(4);
+
+						if(exitStatus != 0)
+						{
+							inc_PC();
+							break;
+				
+						}			
+			
+						int res = pTab->ExitUpdate(exitStatus);
+						//machine->WriteRegister(2, res);
+
+						currentThread->FreeSpace();
+						currentThread->Finish();
+						inc_PC();
+						break;
+					}
+				
                     case SC_Exec:
 			// SpaceId Exec(char *name);
 			{
 				int result;
-      		        	char *name = User2System((int)machine->ReadRegister(4), 255);
+      		        	char *name;
+				name = User2System((int)machine->ReadRegister(4), 255);
         			result = pTab->ExecUpdate(name);
             
 		        	machine->WriteRegister(2, (int)result);
@@ -184,7 +204,15 @@ ExceptionHandler(ExceptionType which)
         	        machine->WriteRegister(NextPCReg, machine->ReadRegister(PCReg) + 4);
         	    }
                     case SC_Join:
-                        break;
+				{       
+					int id = machine->ReadRegister(4);
+			
+					int res = pTab->JoinUpdate(id);
+			
+					machine->WriteRegister(2, res);
+					inc_PC();
+					break;
+				}
                     case SC_Create:
                         break;
                     case SC_Read:

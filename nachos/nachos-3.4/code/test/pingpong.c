@@ -12,9 +12,9 @@ int main()
         PrintChar('\n');
 	PrintInt(pongPID);
         PrintChar('\n');
-	PrintInt(Join(pingPID));
+	//PrintInt(Join(pingPID));
         PrintChar('\n');
-	PrintInt(Join(pongPID));
+	//PrintInt(Join(pongPID));
         PrintChar('\n');
         Halt();
 }

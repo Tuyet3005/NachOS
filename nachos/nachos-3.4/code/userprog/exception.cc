@@ -224,110 +224,163 @@ ExceptionHandler(ExceptionType which)
                     case SC_Create:
                         break;
                     case SC_Read:
-                    {
-                        int virtAddr = machine->ReadRegister(4);
-                        int charcount = machine->ReadRegister(5);
-                        int openf_id = machine->ReadRegister(6);
-                        int i = fileSystem->index;
-            
-                        if (openf_id > i || openf_id < 0 || openf_id == 1) // go wrong <-- if try open `out of domain` fileSystem (10 openfile) 
-                        {                             // or try to read stdout
-                            printf("Try to open invalib file");
-                            machine->WriteRegister(2, -1);
-                            break;
-                        }
-
-                        if (fileSystem->openf[openf_id] == NULL)
-                        {
-                            machine->WriteRegister(2, -1);
-                            break;
-                        }
-
-                        char *buf = User2System(virtAddr, charcount);
-            
-                        if (openf_id == 0) // read from stdin
-                        {
-                            int sz = gSynchConsole->Read(buf, charcount);
-                            System2User(virtAddr, sz, buf);
-                            machine->WriteRegister(2, sz);
-
-                            delete[] buf;
-                            break;
-                        }
-            
-                        int before = fileSystem->openf[openf_id]->GetCurrentPos();
-                        if ((fileSystem->openf[openf_id]->Read(buf, charcount)) > 0)
-                        {
-                            // copy data from kernel to user space
-                            int after = fileSystem->openf[openf_id]->GetCurrentPos();
-                            System2User(virtAddr, charcount, buf);
-                            machine->WriteRegister(2, after - before + 1);    // after & before just used for returning
-                        } else {
-                            machine->WriteRegister(2, -1);
-                        }
-                        delete[] buf;
-                        break;
-                    }
-
-                    case SC_Write:
-                    {
-                        int virtAddr = machine->ReadRegister(4);
-                        int charcount = machine->ReadRegister(5);
-                        int openf_id = machine->ReadRegister(6);
-                        int i = fileSystem->index;
-
-
-                        if (openf_id > i || openf_id < 0 || openf_id == 0) // `out of domain` filesys + try to write to stdin 
-                        {
-                            machine->WriteRegister(2, -1);
-                            break;
-                        }
-            
-                        if (fileSystem->openf[openf_id] == NULL)
-                        {
-                            machine->WriteRegister(2, -1);
-                            break;
-                        }
-
-                        // read-only file    
-                        if (fileSystem->openf[openf_id]->type == 1)
-                        {
-                            printf("Try to modify read-only file");
-                            machine->WriteRegister(2, -1);
-                            break;
-                        }
-
-                        // write to console
-                        char *buf = User2System(virtAddr, charcount);
-                        if (openf_id == 1)
-                        {
-                            int i = 0;
-                            while (buf[i] != '\0' && buf[i] != '\n')
-                            {
-                                gSynchConsole->Write(buf + i, 1);
-                                i++;
-                            }
-                            buf[i] = '\n';
-                            gSynchConsole->Write(buf + i, 1); // write last character
-
-                            machine->WriteRegister(2, i - 1);
-                            delete[] buf;
-                            break;
-                        }
-
-
-                        // write into file
-                        int before = fileSystem->openf[openf_id]->GetCurrentPos();
-                        if ((fileSystem->openf[openf_id]->Write(buf, charcount)) != 0)
-                        {
-                            int after = fileSystem->openf[openf_id]->GetCurrentPos();
-                            System2User(virtAddr, after - before, buf);
-                            machine->WriteRegister(2, after - before + 1);
-                            delete[] buf;
-                            break;
-                        }
-                    }
-
+				{
+					int bufAddr = machine->ReadRegister(4);
+					int NumBuf = machine->ReadRegister(5);
+					int m_index = machine->ReadRegister(6);	
+					int OldPos;
+					int NewPos;
+					char *buf = new char[NumBuf];
+					int i = 0;
+					// Check m_index
+					if (m_index < 0 || m_index > 10)
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					// check openf[m_index]
+					if (fileSystem->openf[m_index] == NULL)
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					OldPos = fileSystem->openf[m_index]->GetCurrentPos();
+					buf = User2System(bufAddr, NumBuf);
+					if (fileSystem->openf[m_index]->type == 2)
+					{
+						/*  printf("NumBuf = %d\n", NumBuf);*/
+						int sz = gSynchConsole->Read(buf, NumBuf);
+						/*  machine->System2User(bufAddr, sz, buf);*/
+					
+						System2User(bufAddr, sz, buf);
+						machine->WriteRegister(2, sz);
+						inc_PC();
+						break;
+					}
+					
+					if ((fileSystem->openf[m_index]->Read(buf, NumBuf) ) > 0)
+					{
+						// Copy data from kernel to user space
+					  NewPos = fileSystem->openf[m_index]->GetCurrentPos();
+						System2User(bufAddr, NewPos - OldPos +1, buf);
+						machine->WriteRegister(2, NewPos - OldPos + 1);
+					}
+					else
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					// read data from console 
+					
+					/*  
+					if (fileOpen.type == 2)
+					{
+						int sz = gSynchConsole->Read(buf, NumBuf);
+						machine->System2User(bufAddr, sz, buf);
+						machine->WriteRegister(2, sz);
+					}*/
+					delete[] buf;
+					inc_PC();
+					break;
+				}
+				case SC_Write:
+				{
+					int bufAddr = machine->ReadRegister(4);
+					int NumBuf = machine->ReadRegister(5);
+					int m_index =  machine->ReadRegister(6);
+					int OldPos;
+					int NewPos;
+					char *buf = new char[NumBuf];
+					// Check m_index
+					if (m_index < 0 || m_index > 10)
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					// check openf[m_index]
+					if (fileSystem->openf[m_index] == NULL)
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					OldPos = fileSystem->openf[m_index]->GetCurrentPos();
+					
+					// type must equals '0'
+					buf = User2System(bufAddr, NumBuf);
+					if (fileSystem->openf[m_index]->type  == 0 || fileSystem->openf[m_index]->type == 3)
+					{	
+					if ((fileSystem->openf[m_index]->Write(buf, NumBuf)) > 0) 
+					{
+						// Copy data from kernel to user space
+						printf("%s",buf);
+						NewPos = fileSystem->openf[m_index]->GetCurrentPos();
+						machine->WriteRegister(2, NewPos - OldPos + 1);
+					}
+					else if (fileSystem->openf[m_index]->type == 1);
+					{
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					}
+					// Write data to console
+					if (fileSystem->openf[m_index]->type == 3)
+					{
+						int i = 0;
+						printf("stdout mode\n");
+						while (buf[i] != 0 && buf[i] != '\n')
+						{
+							gSynchConsole->Write(buf+i, 1);
+							i++;
+						}
+						buf[i] = '\n';
+						gSynchConsole->Write(buf+i,1);
+						machine->WriteRegister(2, i-1);
+					}
+					delete[] buf;
+					inc_PC();
+					break;
+				}
+				case SC_Seek:
+				{
+					int pos = machine->ReadRegister(4);
+					int m_index = machine->ReadRegister(5);
+					if (m_index < 0 || m_index > 10)
+					{
+						machine->WriteRegister(2, -1);
+						inc_PC();
+						break;
+					}
+					// check openf[m_index]
+					if (fileSystem->openf[m_index] == NULL)
+					{
+						printf("seek fail \n");
+						machine->WriteRegister(2, -1);
+						inc_PC();
+						break;
+					}
+						pos = (pos == -1) ? fileSystem->openf[m_index]->Length() : pos;
+					if (pos > fileSystem->openf[m_index]->Length() || pos < 0) {
+						machine->WriteRegister(2, -1);
+					} else 
+					{
+						fileSystem->openf[m_index]->Seek(pos);
+						machine->WriteRegister(2, pos);
+					}
+					inc_PC();
+					break;
+				}
                     case SC_Fork:
                         break;
                     case SC_Yield:
@@ -479,13 +532,7 @@ ExceptionHandler(ExceptionType which)
 					int bufAddr = machine->ReadRegister(4); // read string pointer from user
 					int type = machine->ReadRegister(5);
 					char *buf = new char[MaxFileLength];
-					if (fileSystem->index > 10)
-					{
-						machine->WriteRegister(2, -1);
-						delete[] buf;
-						inc_PC();
-						break;
-					}
+					int index = fileSystem -> unoccupied();
 					buf = User2System(bufAddr, MaxFileLength);
 					if (strcmp(buf,"stdin") == 0)
 					{
@@ -501,15 +548,17 @@ ExceptionHandler(ExceptionType which)
 						inc_PC();
 						break;
 					}
-					if ((fileSystem->openf[fileSystem->index] = fileSystem->Open(buf, type)) != NULL)
+					if ((fileSystem->openf[index] = fileSystem->Open(buf, type)) != NULL)
 					{
 						DEBUG('f',"open file successfully");
-						machine->WriteRegister(2, fileSystem->index-1);
-					} else 
-					{
-						DEBUG('f',"can not open file");
-						machine->WriteRegister(2, -1);
-					};
+						machine->WriteRegister(2, index);
+						delete [] buf;
+						inc_PC();
+						break;
+						
+					}
+					DEBUG('f',"can not open file");
+					machine->WriteRegister(2, -1);
 					delete [] buf;
 					inc_PC();
 					break;

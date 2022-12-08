@@ -39,6 +39,7 @@
 #define SC_CreateSemaphore 19
 #define SC_Wait         20
 #define SC_Signal       21
+#define SC_Seek		22
 
 #ifndef IN_ASM
 
@@ -155,6 +156,7 @@ int Join(SpaceId id);
 int Wait(char* name);
 
 int Signal(char* name);
+int Seek(int pos, OpenFileId FileID);
 
 #endif /* IN_ASM */
 

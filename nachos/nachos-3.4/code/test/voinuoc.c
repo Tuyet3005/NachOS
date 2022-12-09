@@ -6,7 +6,7 @@ main()
     int n, v1, v2;
     OpenFileId vn, res;
     char c;
-	// Tao va mo file result.txt
+	//Tao va mo file result.txt
     CreateFile("result.txt");
     res = Open("result.txt", 0);
     n = -1;
@@ -24,7 +24,7 @@ main()
             else break;
         }
         Close(vn);
-	//Xuat ra file result.txt
+//Xuat ra file result.txt
         if (n != 0) {
             if (v1 <= v2) {
                 v1 += n;
@@ -38,7 +38,7 @@ main()
         }
         Signal("sinhvien");
     }
-	//Xuat ra file result.txt
+//Xuat ra file result.txt
     if (res != -1) {
         Write("\n", 1, res);
         Close(res);

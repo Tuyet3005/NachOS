@@ -10,6 +10,7 @@ main()
 	PrintInt(f);
 	PrintString("\nhahaha\n");
 	PrintInt(Read(&c, 1, f));
+	PrintString("\n");
 	PrintChar(c);
 	Close(f);
 	Halt();

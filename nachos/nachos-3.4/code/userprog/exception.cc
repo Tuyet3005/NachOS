@@ -567,10 +567,14 @@ ExceptionHandler(ExceptionType which)
 				}
 				case SC_Close:
 				{
-					int m_index = machine->ReadRegister(4);
-					if (fileSystem->openf[m_index] == NULL) break;
-					delete fileSystem->openf[m_index];
-					fileSystem->openf[m_index] = NULL;
+					int index = machine->ReadRegister(4);
+					if (index == -1){
+						inc_PC();
+						break;
+					}				
+					if (fileSystem->openf[index] == NULL) break;
+					delete fileSystem->openf[index];
+					fileSystem->openf[index] = NULL;
 					inc_PC();
 					break;
 				}

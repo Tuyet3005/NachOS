@@ -5,7 +5,7 @@ main()
 {
 	OpenFileId f;
 	char c;
-	f = Open("voinuoc.txt",1);
+	f = Open("rr.txt",1);
 	PrintString("File id: ");
 	PrintInt(f);
 	PrintString("\nhahaha\n");

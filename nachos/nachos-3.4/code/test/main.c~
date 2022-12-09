@@ -1,171 +1,77 @@
 #include "syscall.h"
-#include "copyright.h"
 
-#define MAX_LENGTH 32
-
-
-int main()
+int
+main()
 {
-	// KHAI BAO
-	int f_Success; // Bien co dung de kiem tra thanh cong
-	SpaceId si_input, si_output, si_sinhvien, si_result;	// Bien id cho file
-	int SLTD;	// Luu so luong thoi diem xet
-	char c_readFile;	// Bien ki tu luu ki tu doc tu file
-	//int flag;
+    OpenFileId inp, sv, out, res;
+    char c;
+    int n, check;
+    SpaceId sv_sid;
+	// Tao file output
+    check = CreateFile("output.txt");
+	// Tao semaphore
+    if (check == -1) Exit(-1);
+    check = CreateSemaphore("sinhvien", 0);
+    if (check == -1) Exit(-1);
+    check = CreateSemaphore("voinuoc", 0);
+    if (check == -1) Exit(-1);
+	// Mo file inp, out
+    inp = Open("input.txt", 1);
+    if (inp == -1) Exit(-1);
+    out = Open("output.txt", 0);
+    if (out == -1) {
+        Close(inp);
+        Exit(-1);
+    } 
+    n = 0;
+	// Doc so thoi diem
+    while (1) {
+        if (Read(&c, 1, inp) == -1) break;
+        if (c >= '0' && c <= '9') n = 10*n + c - '0';
+        else if (c == '\n') break;
+    }
+	// Lap voi moi thoi diem
+    while (n--) {
+		PrintInt(n);
+        check = CreateFile("sinhvien.txt");
+        if (check == -1) {
+            Close(inp);
+            Exit(-1);
+        }
+        sv = Open("sinhvien.txt", 0);
+        if (sv == -1) {
+            Close(inp);
+            Exit(-1);
+        }
+		//Doc tu file input.txt roi Xuat ra file sinhvien.txt
+        while (1) {
+            if (Read(c, 1, inp) == -1) break;
+            Write(c, 1, sv);
+            if (c == '\n') break;
+        }
 
-	//-----------------------------------------------------------
+        Close(sv);
 
+        sv_sid = Exec("./test/sinhvien");
+        if (sv_sid != -1) check = Join(sv_sid);
+        if (check == -1) {
+            Close(inp);
+            Close(out);
+            Exit(-1);
+        }
 
-	// Khoi tao 4 Semaphore de quan ly 3 tien trinh
-	f_Success = CreateSemaphore("main",0);
-	if(f_Success == -1)
-		return 1;
-	f_Success = CreateSemaphore("sinhvien", 0);
-	if(f_Success == -1)
-		return 1;
-	f_Success = CreateSemaphore("voinuoc", 0);
-	if(f_Success == -1)
-		return 1;
-	f_Success = CreateSemaphore("m_vn", 0);
-	if(f_Success == -1)
-		return 1;
-	
-	// Tao file output.txt de ghi ket qua cuoi cung	
-	f_Success = CreateFile("output.txt");
-	if(f_Success == -1)
-		return 1;
-		// Tao file sinhvien.txt
-	f_Success = CreateFile("sinhvien.txt");
-	if(f_Success == -1)
-	{
-		Close(si_input);
-		Close(si_output);
-		return 1;
-	}
+        res = Open("result.txt", 0);
+        if (res == -1) {
+            Close(inp);
+            Close(out);
+            Exit(-1);
+        }
+		//Doc tu file result.txt de xuat ra file output.txt
+        while (Read(c, 1, res) != -1)
+            Write(c, 1, out);
+        Close(res);
 
-	
-	// Mo file input.txt chi de doc
-	si_input = Open("input.txt", 1);
-	if(si_input == -1)
-		return 1;
-	
-	// Mo file output.txt de doc va ghi
-	si_output = Open("output.txt", 0);
-	if(si_output == -1)
-	{
-		Close(si_input);
-		return 1;
-	}
-
-
-	// Doc so luong thoi diem xet o file input.txt
-	//**** Thuc hien xong doan lenh duoi thi con tro file o input.txt o dong 1
-	SLTD = 0;
-	while(1)
-	{
-		Read(&c_readFile, 1, si_input);
-		if(c_readFile != '\n')
-		{
-			if(c_readFile >= '0' && c_readFile <= '9')
-				SLTD = SLTD * 10 + (c_readFile - 48);
-		}
-		else
-			break;
-	}
-
-
-	// Goi thuc thi tien trinh sinhvien.c
-	f_Success = Exec("./test/sinhvien");
-	if(f_Success == -1)
-	{
-		Close(si_input);
-		Close(si_output);
-		return 1;
-	}
-
-	// Goi thuc thi tien trinh voinuoc.c
-	f_Success = Exec("./test/voinuoc");
-	if(f_Success == -1)
-	{
-		Close(si_input);
-		Close(si_output);
-		return 1;
-	}
-
-	// Thuc hien xu ly khi nao het thoi diem xet thi thoi
-	while(SLTD--)
-	{
-
-
-		
-		// Mo file sinhvien.txt de ghi tung dong sinhvien tu file input.txt
-		si_sinhvien = Open("sinhvien.txt", 0);
-		if(si_sinhvien == -1)
-		{
-			Close(si_input);
-			Close(si_output);
-			return 1;
-		}
-		while(1)
-		{
-			if(Read(&c_readFile, 1, si_input) < 1)
-			{
-				// Doc toi cuoi file
-				break;
-			}
-			if(c_readFile != '\n')
-			{
-				Write(&c_readFile, 1, si_sinhvien);				
-			}
-			else
-				break;
-						
-		}
-		// Dong file sinhvien.txt lai
-		Close(si_sinhvien);
-			
-		// Goi tien trinh sinhvien hoat dong
-		Signal("sinhvien");
-
-		// Tien trinh chinh phai cho 
-		Wait("main");	
-		
-		// Thuc hien doc file tu result va ghi vao ket qua o output.txt
-		si_result = Open("result.txt", 1);
-		PrintString("\n Lan thu: ");
-		PrintInt(SLTD);
-		if(si_result == -1)
-		{
-			Close(si_input);
-			Close(si_output);
-			return 1;
-		}
-
-		PrintString("\n Lan thu: ");
-		PrintInt(SLTD);
-		PrintString("\n");	
-
-		// Doc cac voi vao output.txt		
-		while(1)
-		{
-			if(Read(&c_readFile, 1, si_result)  < 1)
-			{
-				Write("\r\n", 2, si_output);
-				Close(si_result);
-				Signal("m_vn");
-				break;
-			}
-			Write(&c_readFile, 1, si_output);
-			Write(" ", 1, si_output);
-			
-		}
-		
-	}
-	
-	
-	Close(si_input);
-	Close(si_output);
-	return 0;	
-	
+    }
+    Exit(0);
 }
 

@@ -4,13 +4,14 @@ int
 main()
 {
 	OpenFileId f;
-	f = Open("hello.txt", 0); // File nay co trong thu muc code
-//	f = Open("stdin", 1);
-//	f = Open("stdout", 0);
-//	f = Open("aaa.txt", 1; // File nay khong co trong thu muc code
-	PrintString("openfile id(neu loi thi bang -1):");
+	char c;
+	f = Open("voinuoc.txt",1);
+	PrintString("File id: ");
 	PrintInt(f);
-//	Close(f);
-	PrintInt(CreateFile("hello.txt"));
+	PrintString("\nhahaha\n");
+	PrintInt(Read(&c, 1, f));
+	PrintString("\n");
+	PrintChar(c);
+	Close(f);
 	Halt();
 }

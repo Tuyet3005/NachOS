@@ -488,7 +488,7 @@ ExceptionHandler(ExceptionType which)
                             break;
                         }
 
-                    case SC_CreateFile:
+                     case SC_CreateFile:
                         {
                             int virtAddr;
                             char* filename;
@@ -507,7 +507,8 @@ ExceptionHandler(ExceptionType which)
 
                             if (filename == NULL) {
                                 printf("\n Not enough memory in system");        
-                                DEBUG('a', "\n Not enough memory in system");    
+                                DEBUG('a', "\n Not enough memory in system");   
+				machine->WriteRegister(2, -1); 
                                 delete filename;
                                 break;
                             }
@@ -520,13 +521,14 @@ ExceptionHandler(ExceptionType which)
                                 delete filename;
                                 break;
                             }
-
-                            machine->WriteRegister(2, 0);
-                            delete filename;
-                            inc_PC();
+			    else {
+	                            machine->WriteRegister(2, 0);
+				    printf("\n Success create file '%s'", filename);
+        	                    delete filename;
+			    }
+       	                    inc_PC();
                             break;
                         }
-
                    case SC_Open:
 				{
 					int bufAddr = machine->ReadRegister(4); // read string pointer from user

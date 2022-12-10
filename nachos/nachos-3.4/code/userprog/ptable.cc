@@ -6,9 +6,7 @@
 
 PTable::PTable(int size)
 {
-
-    if (size < 0)
-        return;
+    if (size < 0) { return; }
 
     psize = size;
     bm = new BitMap(size);
@@ -27,15 +25,14 @@ PTable::PTable(int size)
 
 PTable::~PTable()
 {
-    if( bm != 0 )
-	delete bm;
+    	if( bm != 0 )
+		delete bm;
     
-    For(i,0,psize){
+    	For(i,0,psize){
 		if(pcb[i] != 0)
 			delete pcb[i];
-    }
-		
-	if( bmsem != 0)
+    	}		
+    	if( bmsem != 0)
 		delete bmsem;
 }
 

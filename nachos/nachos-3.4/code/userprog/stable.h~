@@ -4,6 +4,7 @@
 #include "bitmap.h"
 #define MAX_SEMAPHORE 10
 
+
 // Lop Sem dung de quan ly semaphore.
 class Sem
 {

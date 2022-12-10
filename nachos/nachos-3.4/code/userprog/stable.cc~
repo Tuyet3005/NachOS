@@ -19,7 +19,7 @@ STable::~STable()
 		delete this->bm;
 		this->bm = NULL;
 	}
-	for(int i = 0; i < MAX_SEMAPHORE; i++)
+	for(int i=0; i < MAX_SEMAPHORE; i++)
 	{
 		if(this->semTab[i])
 		{

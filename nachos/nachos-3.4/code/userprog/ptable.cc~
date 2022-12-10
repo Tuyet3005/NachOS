@@ -100,7 +100,6 @@ int PTable::JoinUpdate(int id)
 		return -1;
 	}
 	// Check if process running is parent process of process which joins
-        bm->Print();
 	if(currentThread->processID != pcb[id]->parentID)
 	{
 		printf("\nPTable::JoinUpdate Can't join in process which is not it's parent process.\n");

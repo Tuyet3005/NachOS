@@ -226,65 +226,71 @@ ExceptionHandler(ExceptionType which)
                     case SC_Read:
 				{
 					int bufAddr = machine->ReadRegister(4);
-					int NumBuf = machine->ReadRegister(5);
-					int m_index = machine->ReadRegister(6);	
+					int charcount = machine->ReadRegister(5);
+					int id = machine->ReadRegister(6);	
 					int OldPos;
 					int NewPos;
-					char *buf = new char[NumBuf];
-					int i = 0;
-					// Check m_index
-					if (m_index < 0 || m_index > 10)
+					char *buf = new char[charcount];
+					
+					//Kiem tra id co nam ngoai bang mo ta hay khong
+					if (id< 0 || id > 10)
 					{
+						printf("\nid nam ngoai bang mo ta.\n");
 						machine->WriteRegister(2, -1);
 						delete[] buf;
 						inc_PC();
 						break;
 					}
-					// check openf[m_index]
-					if (fileSystem->openf[m_index] == NULL)
+					// Kiem tra file co ton tai hay khong
+					if (fileSystem->openf[id] == NULL)
 					{
+						printf("\nFile khong ton tai.\n");
 						machine->WriteRegister(2, -1);
 						delete[] buf;
 						inc_PC();
 						break;
 					}
-					OldPos = fileSystem->openf[m_index]->GetCurrentPos();
-					buf = User2System(bufAddr, NumBuf);
-					if (fileSystem->openf[m_index]->type == 2)
+
+					// type = 3 la file stdout, khong the read stdout.
+					if (fileSystem->openf[id]->type == 3)
 					{
-						/*  printf("NumBuf = %d\n", NumBuf);*/
-						int sz = gSynchConsole->Read(buf, NumBuf);
-						/*  machine->System2User(bufAddr, sz, buf);*/
+						printf("\nKhong the read stdout.\n");
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+					OldPos = fileSystem->openf[id]->GetCurrentPos();
+					buf = User2System(bufAddr, charcount);
+
+					//type = 2 la sdtin
+					if (fileSystem->openf[id]->type == 2)
+					{
+
+						int sz = gSynchConsole->Read(buf, charcount);
+
 					
 						System2User(bufAddr, sz, buf);
 						machine->WriteRegister(2, sz);
+						delete[] buf;
 						inc_PC();
 						break;
 					}
 					
-					if ((fileSystem->openf[m_index]->Read(buf, NumBuf) ) > 0)
+					if ((fileSystem->openf[id]->Read(buf, charcount) ) > 0)
 					{
-						// Copy data from kernel to user space
-					  NewPos = fileSystem->openf[m_index]->GetCurrentPos();
+					  NewPos = fileSystem->openf[id]->GetCurrentPos();
 						System2User(bufAddr, NewPos - OldPos +1, buf);
 						machine->WriteRegister(2, NewPos - OldPos + 1);
 					}
 					else
 					{
-						machine->WriteRegister(2, -1);
+						machine->WriteRegister(2, -2);
 						delete[] buf;
 						inc_PC();
 						break;
 					}
-					// read data from console 
-					
-					/*  
-					if (fileOpen.type == 2)
-					{
-						int sz = gSynchConsole->Read(buf, NumBuf);
-						machine->System2User(bufAddr, sz, buf);
-						machine->WriteRegister(2, sz);
-					}*/
+
 					delete[] buf;
 					inc_PC();
 					break;
@@ -292,53 +298,61 @@ ExceptionHandler(ExceptionType which)
 				case SC_Write:
 				{
 					int bufAddr = machine->ReadRegister(4);
-					int NumBuf = machine->ReadRegister(5);
-					int m_index =  machine->ReadRegister(6);
+					int charcount = machine->ReadRegister(5);
+					int id = machine->ReadRegister(6);	
 					int OldPos;
 					int NewPos;
-					char *buf = new char[NumBuf];
-					// Check m_index
-					if (m_index < 0 || m_index > 10)
-					{
-						machine->WriteRegister(2, -1);
-						delete[] buf;
-						inc_PC();
-						break;
-					}
-					// check openf[m_index]
-					if (fileSystem->openf[m_index] == NULL)
-					{
-						machine->WriteRegister(2, -1);
-						delete[] buf;
-						inc_PC();
-						break;
-					}
-					OldPos = fileSystem->openf[m_index]->GetCurrentPos();
+					char *buf = new char[charcount];
 					
-					// type must equals '0'
-					buf = User2System(bufAddr, NumBuf);
-					if (fileSystem->openf[m_index]->type  == 0 || fileSystem->openf[m_index]->type == 3)
-					{	
-					if ((fileSystem->openf[m_index]->Write(buf, NumBuf)) > 0) 
+					//Kiem tra id co nam ngoai bang mo ta hay khong
+					if (id< 0 || id > 10)
 					{
-						// Copy data from kernel to user space
-						printf("%s",buf);
-						NewPos = fileSystem->openf[m_index]->GetCurrentPos();
-						machine->WriteRegister(2, NewPos - OldPos + 1);
-					}
-					else if (fileSystem->openf[m_index]->type == 1);
-					{
+						printf("\nid nam ngoai bang mo ta.\n");
 						machine->WriteRegister(2, -1);
 						delete[] buf;
 						inc_PC();
 						break;
 					}
+					// Kiem tra file co ton tai hay khong
+					if (fileSystem->openf[id] == NULL)
+					{
+						printf("\nFile khong ton tai.\n");
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
 					}
-					// Write data to console
-					if (fileSystem->openf[m_index]->type == 3)
+
+					// type = 2 la stdin, type = 1 la read only, khong the write
+					if (fileSystem->openf[id]->type == 1 || fileSystem->openf[id]->type == 2)
+					{
+						printf("\nKhong the write vao file read only hoac stdin.\n");
+						machine->WriteRegister(2, -1);
+						delete[] buf;
+						inc_PC();
+						break;
+					}
+
+					OldPos = fileSystem->openf[id]->GetCurrentPos();
+					buf = User2System(bufAddr, charcount);
+
+					if (fileSystem->openf[id->type  == 0)
+					{	
+						if ((fileSystem->openf[id]->Write(buf, charcount)) > 0) 
+						{
+
+							NewPos = fileSystem->openf[id]->GetCurrentPos();
+							machine->WriteRegister(2, NewPos - OldPos + 1);
+							delete[] buf;
+							inc_PC();
+							break;
+						}
+					}
+
+					//type = 3 la stdout
+					if (fileSystem->openf[id]->type == 3)
 					{
 						int i = 0;
-						printf("stdout mode\n");
 						while (buf[i] != 0 && buf[i] != '\n')
 						{
 							gSynchConsole->Write(buf+i, 1);
@@ -569,7 +583,8 @@ ExceptionHandler(ExceptionType which)
 				{
 					int index = machine->ReadRegister(4);
 					if (index == -1){
-						
+						inc_PC();
+						break;
 					}				
 					if (fileSystem->openf[index] == NULL) break;
 					delete fileSystem->openf[index];
